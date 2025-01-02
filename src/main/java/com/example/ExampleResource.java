@@ -10,27 +10,29 @@ import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.smallrye.mutiny.Multi;
 
 @Path("/data")
 public class ExampleResource {
-	private final Multi<String> channel;
-	private final Emitter<String> emitter;
+	private final Multi<Task> channel;
+	private final Emitter<Task> emitter;
 
-	public ExampleResource(@Channel("channel") Multi<String> channel, @Channel("channel") Emitter<String> emitter) {
+	public ExampleResource(@Channel("channel") Multi<Task> channel, @Channel("channel") Emitter<Task> emitter) {
 		this.channel = channel;
 		this.emitter = emitter;
 	}
 
 	@POST
-	@Consumes(MediaType.TEXT_PLAIN)
-	public void addString(String string) {
-		this.emitter.send(string);
+	@Consumes(MediaType.APPLICATION_JSON)
+	@RunOnVirtualThread
+	public void addTask(Task task) {
+		this.emitter.send(task);
 	}
 
 	@GET
 	@Produces(MediaType.SERVER_SENT_EVENTS)
-	public Multi<String> getStrings() {
+	public Multi<Task> getTasks() {
 		return this.channel;
 	}
 }
