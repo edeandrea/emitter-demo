@@ -14,13 +14,14 @@ import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.reactive.messaging.MutinyEmitter;
+import io.smallrye.reactive.messaging.annotations.Broadcast;
 
 @Path("/tasks")
 public class TaskResource {
 	private final Multi<Task> channel;
 	private final MutinyEmitter<Task> emitter;
 
-	public TaskResource(@Channel("channel") Multi<Task> channel, @Channel("channel") MutinyEmitter<Task> emitter) {
+	public TaskResource(@Channel("channel") Multi<Task> channel, @Channel("channel") @Broadcast MutinyEmitter<Task> emitter) {
 		this.channel = channel;
 		this.emitter = emitter;
 	}
