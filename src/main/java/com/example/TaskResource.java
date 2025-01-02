@@ -10,15 +10,17 @@ import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 
+import io.quarkus.logging.Log;
+
 import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.smallrye.mutiny.Multi;
 
-@Path("/data")
-public class ExampleResource {
+@Path("/tasks")
+public class TaskResource {
 	private final Multi<Task> channel;
 	private final Emitter<Task> emitter;
 
-	public ExampleResource(@Channel("channel") Multi<Task> channel, @Channel("channel") Emitter<Task> emitter) {
+	public TaskResource(@Channel("channel") Multi<Task> channel, @Channel("channel") Emitter<Task> emitter) {
 		this.channel = channel;
 		this.emitter = emitter;
 	}
@@ -27,6 +29,7 @@ public class ExampleResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RunOnVirtualThread
 	public void addTask(Task task) {
+		Log.infof("Adding new task: %s", task);
 		this.emitter.send(task);
 	}
 
